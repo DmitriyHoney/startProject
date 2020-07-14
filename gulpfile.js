@@ -28,6 +28,7 @@ let path = {
         html: [sourceFolder + '/*.html', '!'+sourceFolder + '/_*.html'],
         css: sourceFolder + '/scss/style.scss',
         js: sourceFolder + '/js/script.js',
+        jslibs: [sourceFolder + '/js/**/*.js', '!'+sourceFolder + '/js/script.js'],
         img: sourceFolder + '/img/**/*.{jpg,png,svg,gif,ico,webp}',
         fonts: sourceFolder + '/fonts/*.ttf',
     },
@@ -83,6 +84,11 @@ function js() {
         .pipe(dest(path.build.js))
         .pipe(browsersync.stream())
 }
+function jslibs() {
+    return src(path.src.jslibs)
+        .pipe(dest(path.build.js))
+        .pipe(browsersync.stream())
+}
 
 function css() {
     return src(path.src.css)
@@ -115,13 +121,14 @@ function clean(params) {
     return del(path.clean)
 }
 
-let build = gulp.series(clean, gulp.parallel(js, css, html, images));
+let build = gulp.series(clean, gulp.parallel(jslibs, js, css, html, images));
 let watch = gulp.parallel(build, watchFiles, browserSync);
 
 
 exports.watch = watch;
 exports.images = images;
 exports.js = js;
+exports.jslibs = jslibs;
 exports.build = build;
 exports.html = html;
 exports.css = css;
